@@ -1,5 +1,6 @@
 import express from "express";
 import http from "http";
+import cors from "cors";
 import path from "path";
 import { Server } from "socket.io";
 import { createServer as createViteServer } from "vite";
@@ -102,6 +103,7 @@ function getFallbackInsight(totalOrders: number, totalIncome: number, topSelling
 
 async function startServer() {
   const app = express();
+  app.use(cors());
   const server = http.createServer(app);
   
   // Attach socket.io

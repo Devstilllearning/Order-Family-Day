@@ -47,6 +47,10 @@ export default function CartDrawer({
 
   const handleOrderSubmit = async () => {
     if (cartItems.length === 0) return;
+    if (!tableInfo) {
+      setErrorText("Pilih meja terlebih dahulu.");
+      return;
+    }
     if (!paymentMethod) {
       setErrorText("Pilih cara pembayaran terlebih dahulu.");
       return;

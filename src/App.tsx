@@ -73,8 +73,8 @@ export default function App() {
             if (tablesData.length > 0) setSelectedTable(tablesData[0]);
           }
         } else {
-          // Default to first table if not provided (convenience for demo/preview)
-          if (tablesData.length > 0) setSelectedTable(tablesData[2] || tablesData[0]);
+          // If no table provided, don't auto-select. Let user choose.
+          setSelectedTable(null);
         }
       } catch (err) {
         console.error("Failed to load tables list:", err);
@@ -340,8 +340,10 @@ export default function App() {
                   {filteredMenuItems.map(item => (
                     <div
                       key={item.id}
-                      onClick={() => setSelectedItem(item)}
-                      className="relative bg-white p-4 rounded-2xl border border-rose-100 hover:border-rose-300 shadow-sm flex justify-between items-center cursor-pointer transition-all duration-150"
+                      onClick={() => item.isAvailable && setSelectedItem(item)}
+                      className={`relative bg-white p-4 rounded-2xl border border-rose-100 hover:border-rose-300 shadow-sm flex justify-between items-center transition-all duration-150 ${
+                        !item.isAvailable ? "opacity-50 cursor-not-allowed select-none" : "cursor-pointer"
+                      }`}
                     >
                       {/* Left: Info details */}
                       <div className="flex-1 min-w-0 pr-3.5">
@@ -352,6 +354,11 @@ export default function App() {
                           {item.isPopular && (
                             <span className="bg-yellow-400 text-[10px] px-2 py-0.5 rounded-full font-bold uppercase text-yellow-950">
                               🔥 Populer
+                            </span>
+                          )}
+                          {!item.isAvailable && (
+                            <span className="bg-gray-200 text-[10px] px-2 py-0.5 rounded-full font-bold uppercase text-gray-600">
+                              Habis
                             </span>
                           )}
                         </div>
@@ -372,6 +379,7 @@ export default function App() {
                         </div>
 
                         {/* Add Button right bottom corner */}
+                        {item.isAvailable && (
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
@@ -381,6 +389,7 @@ export default function App() {
                           >
                             +
                           </button>
+                        )}
                       </div>
                     </div>
                   ))}
