@@ -129,7 +129,9 @@ export default function App() {
     fetchMenu();
 
     // Socket.io Real-time update for menu item availabilities
-    const socket = io(getSocketUrl());
+    const socket = io(getSocketUrl(), {
+      transports: ["websocket", "polling"],
+    });
     socket.on("menu_availability_changed", (updatedItem: MenuItem) => {
       setMenuItems(prev => prev.map(m => m.id === updatedItem.id ? updatedItem : m));
     });

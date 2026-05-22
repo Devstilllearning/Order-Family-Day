@@ -103,18 +103,24 @@ function getFallbackInsight(totalOrders: number, totalIncome: number, topSelling
 
 async function startServer() {
   const app = express();
-  app.use(cors({
-    origin: "https://devstilllearning.github.io",
+  
+  const corsOptions = {
+    origin: true, // true reflects the origin
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     credentials: true,
-  }));
+    allowedHeaders: ["Content-Type", "Authorization"]
+  };
+  
+  app.use(cors(corsOptions));
+  app.options("*", cors(corsOptions)); // Enable preflight across the board
+  
   const server = http.createServer(app);
   
   // Attach socket.io
   const io = new Server(server, {
     cors: {
-      origin: "https://devstilllearning.github.io",
-      methods: ["GET", "POST"],
+      origin: true,
+      methods: ["GET", "POST", "OPTIONS"],
       credentials: true
     }
   });
