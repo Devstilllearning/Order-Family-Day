@@ -3,6 +3,7 @@ import { motion } from "motion/react";
 import { Order, OrderItem } from "../types";
 import { Check, Clock, ChefHat, Utensils, Heart, RefreshCw } from "lucide-react";
 import io from "socket.io-client";
+import { API_BASE_URL, getSocketUrl } from "../config";
 
 interface OrderTrackerProps {
   order: Order;
@@ -38,7 +39,7 @@ export default function OrderTracker({ order: initialOrder, onClose }: OrderTrac
   const fetchGreeting = async (orderId: string) => {
     setIsLoadingGreeting(true);
     try {
-      const res = await fetch(`/api/orders/${orderId}/ai-greeting`);
+      const res = await fetch(`${API_BASE_URL}/api/orders/${orderId}/ai-greeting`);
       const data = await res.json();
       if (data.greeting) {
         setAiGreeting(data.greeting);
@@ -57,7 +58,7 @@ export default function OrderTracker({ order: initialOrder, onClose }: OrderTrac
     fetchGreeting(order.id);
 
     // Socket listeners for real-time status change
-    const socket = io();
+    const socket = io(getSocketUrl());
     
     socket.on("order_status_changed", (updatedOrder: Order) => {
       if (updatedOrder.id === order.id) {

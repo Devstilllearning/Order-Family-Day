@@ -25,6 +25,7 @@ import {
   AlertCircle
 } from "lucide-react";
 import io from "socket.io-client";
+import { API_BASE_URL, getSocketUrl } from "../config";
 
 export default function AdminPanel() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -107,7 +108,7 @@ export default function AdminPanel() {
 
   const fetchData = async () => {
     try {
-      const ordRes = await fetch("/api/orders", { headers: getHeaders() });
+      const ordRes = await fetch(`${API_BASE_URL}/api/orders`, { headers: getHeaders() });
       if (ordRes.status === 401) {
         handleLogout();
         return;
@@ -115,22 +116,22 @@ export default function AdminPanel() {
       const ordData = await ordRes.json();
       setOrders(ordData);
 
-      const menuRes = await fetch("/api/menu");
+      const menuRes = await fetch(`${API_BASE_URL}/api/menu`);
       const menuData = await menuRes.json();
       setMenuItems(menuData);
 
-      const tabRes = await fetch("/api/tables");
+      const tabRes = await fetch(`${API_BASE_URL}/api/tables`);
       const tabData = await tabRes.json();
       setTables(tabData);
 
-      const setRes = await fetch("/api/admin/settings", { headers: getHeaders() });
+      const setRes = await fetch(`${API_BASE_URL}/api/admin/settings`, { headers: getHeaders() });
       const setData = await setRes.json();
       setSettings({
         autoAcceptEnabled: setData.autoAcceptEnabled,
         soundNotificationsEnabled: setData.soundNotificationsEnabled
       });
 
-      const sumRes = await fetch("/api/admin/summary", { headers: getHeaders() });
+      const sumRes = await fetch(`${API_BASE_URL}/api/admin/summary`, { headers: getHeaders() });
       const sumData = await sumRes.json();
       setSummary(sumData);
     } catch (err) {
@@ -142,7 +143,7 @@ export default function AdminPanel() {
   useEffect(() => {
     if (!isLoggedIn) return;
 
-    socketRef.current = io();
+    socketRef.current = io(getSocketUrl());
 
     socketRef.current.on("settings_update", (data: any) => {
       setSettings(data);
@@ -193,7 +194,7 @@ export default function AdminPanel() {
 
   const fetchSummary = async () => {
     try {
-      const sumRes = await fetch("/api/admin/summary", { headers: getHeaders() });
+      const sumRes = await fetch(`${API_BASE_URL}/api/admin/summary`, { headers: getHeaders() });
       const sumData = await sumRes.json();
       setSummary(sumData);
     } catch (err) {
@@ -207,7 +208,7 @@ export default function AdminPanel() {
     setLoginError("");
     setLoginLoading(true);
     try {
-      const res = await fetch("/api/auth/login", {
+      const res = await fetch(`${API_BASE_URL}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password })
@@ -240,7 +241,7 @@ export default function AdminPanel() {
         ? { soundNotifications: value } 
         : { autoAccept: value };
 
-      const res = await fetch("/api/admin/settings", {
+      const res = await fetch(`${API_BASE_URL}/api/admin/settings`, {
         method: "POST",
         headers: getHeaders(),
         body: JSON.stringify(body)
@@ -258,7 +259,7 @@ export default function AdminPanel() {
 
   const updateOrderStatus = async (orderId: string, nextStatus: string, rejectionReason?: string) => {
     try {
-      const res = await fetch(`/api/orders/${orderId}/status`, {
+      const res = await fetch(`${API_BASE_URL}/api/orders/${orderId}/status`, {
         method: "PATCH",
         headers: getHeaders(),
         body: JSON.stringify({ status: nextStatus, rejectionReason })
@@ -288,7 +289,7 @@ export default function AdminPanel() {
 
   const handleUpdateMenuItem = async (id: string, updates: Partial<MenuItem>) => {
     try {
-      const res = await fetch(`/api/menu/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/api/menu/${id}`, {
         method: "PUT",
         headers: getHeaders(),
         body: JSON.stringify(updates)
@@ -307,7 +308,7 @@ export default function AdminPanel() {
     setTableError("");
     if (!newTableNum) return;
     try {
-      const res = await fetch("/api/tables", {
+      const res = await fetch(`${API_BASE_URL}/api/tables`, {
         method: "POST",
         headers: getHeaders(),
         body: JSON.stringify({ number: newTableNum })
@@ -327,7 +328,7 @@ export default function AdminPanel() {
   const handleDeleteTable = async (id: string) => {
     if (!confirm("Hapus meja ini? Tindakan ini tidak bisa dibatalkan.")) return;
     try {
-      const res = await fetch(`/api/tables/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/api/tables/${id}`, {
         method: "DELETE",
         headers: getHeaders()
       });

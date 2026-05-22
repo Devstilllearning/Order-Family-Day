@@ -7,6 +7,7 @@ import AdminPanel from "./components/AdminPanel";
 import { motion, AnimatePresence } from "motion/react";
 import { ShoppingBag, ChevronRight, HelpCircle, Utensils, AlertTriangle } from "lucide-react";
 import io from "socket.io-client";
+import { API_BASE_URL, getSocketUrl } from "./config";
 
 interface CartItem {
   id: string; // generated unique cart string identifier
@@ -55,7 +56,7 @@ export default function App() {
   useEffect(() => {
     const fetchConfiguration = async () => {
       try {
-        const res = await fetch("/api/tables");
+        const res = await fetch(`${API_BASE_URL}/api/tables`);
         const tablesData: Table[] = await res.json();
         setTables(tablesData);
 
@@ -87,7 +88,7 @@ export default function App() {
     const fetchMenu = async () => {
       setMenuLoading(true);
       try {
-        const res = await fetch("/api/menu");
+        const res = await fetch(`${API_BASE_URL}/api/menu`);
         const data = await res.json();
         setMenuItems(data);
       } catch (err) {
@@ -99,7 +100,7 @@ export default function App() {
     fetchMenu();
 
     // Socket.io Real-time update for menu item availabilities
-    const socket = io();
+    const socket = io(getSocketUrl());
     socket.on("menu_availability_changed", (updatedItem: MenuItem) => {
       setMenuItems(prev => prev.map(m => m.id === updatedItem.id ? updatedItem : m));
     });
@@ -114,7 +115,7 @@ export default function App() {
     const cachedOrderId = localStorage.getItem("active_order_id");
     if (cachedOrderId) {
       // Poll/restore status
-      fetch(`/api/orders/${cachedOrderId}`)
+      fetch(`${API_BASE_URL}/api/orders/${cachedOrderId}`)
         .then(res => {
           if (res.ok) return res.json();
           throw new Error("Expired order");
@@ -200,7 +201,7 @@ export default function App() {
       notes: item.notes
     }));
 
-    const res = await fetch("/api/orders", {
+    const res = await fetch(`${API_BASE_URL}/api/orders`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
