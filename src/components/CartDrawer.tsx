@@ -46,12 +46,15 @@ export default function CartDrawer({
   };
 
   const handleOrderSubmit = async () => {
+    console.log("Submitting order with cart:", cartItems, "table:", tableInfo, "payment:", paymentMethod);
     if (cartItems.length === 0) return;
     if (!tableInfo) {
+      console.warn("Submit failed: No table");
       setErrorText("Pilih meja terlebih dahulu.");
       return;
     }
     if (!paymentMethod) {
+      console.warn("Submit failed: No payment method");
       setErrorText("Pilih cara pembayaran terlebih dahulu.");
       return;
     }
@@ -62,6 +65,7 @@ export default function CartDrawer({
       setCustomerName("");
       setPaymentMethod(null);
     } catch (err: any) {
+      console.error("Submit error:", err);
       setErrorText(err.message || "Gagal mengirim pesanan");
     } finally {
       setIsSubmitting(false);

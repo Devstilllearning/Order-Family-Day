@@ -57,21 +57,36 @@ export default function App() {
     const fetchConfiguration = async () => {
       try {
         const res = await fetch(`${API_BASE_URL}/api/tables`);
+        if (!res.ok) {
+           throw new Error(`HTTP error! status: ${res.status}`);
+        }
         const tablesData: Table[] = await res.json();
         setTables(tablesData);
 
         // Detect query parameter ?table=3
         const params = new URLSearchParams(window.location.search);
         const tableNumParam = params.get("table");
+        
+        let tableToSelect: Table | null = null;
+
+        // Try localStorage if no param
+        const savedTableId = localStorage.getItem("selected_table_id");
 
         if (tableNumParam && !isNaN(Number(tableNumParam))) {
           const matched = tablesData.find(t => t.number === Number(tableNumParam));
           if (matched) {
-            setSelectedTable(matched);
-          } else {
-            // Default select or fallback
-            if (tablesData.length > 0) setSelectedTable(tablesData[0]);
+            tableToSelect = matched;
           }
+        } else if (savedTableId) {
+            const matched = tablesData.find(t => t.id === savedTableId);
+            if (matched) {
+                tableToSelect = matched;
+            }
+        }
+        
+        if (tableToSelect) {
+            setSelectedTable(tableToSelect);
+            localStorage.setItem("selected_table_id", tableToSelect.id);
         } else {
           // If no table provided, don't auto-select. Let user choose.
           setSelectedTable(null);
@@ -83,13 +98,27 @@ export default function App() {
     fetchConfiguration();
   }, []);
 
+  // Update localStorage when selectedTable changes
+  useEffect(() => {
+      if (selectedTable) {
+          localStorage.setItem("selected_table_id", selectedTable.id);
+      } else {
+          localStorage.removeItem("selected_table_id");
+      }
+  }, [selectedTable]);
+
   // Fetch Menu items list
   useEffect(() => {
     const fetchMenu = async () => {
       setMenuLoading(true);
+      console.log("Fetching menu from:", `${API_BASE_URL}/api/menu`);
       try {
         const res = await fetch(`${API_BASE_URL}/api/menu`);
+        if (!res.ok) {
+           throw new Error(`HTTP error! status: ${res.status}`);
+        }
         const data = await res.json();
+        console.log("Menu data received:", data);
         setMenuItems(data);
       } catch (err) {
         console.error("Failed to fetch menu list:", err);
