@@ -207,6 +207,7 @@ export default function AdminPanel() {
     e.preventDefault();
     setLoginError("");
     setLoginLoading(true);
+    console.log("Attempting login for:", email);
     try {
       const res = await fetch(`${API_BASE_URL}/api/auth/login`, {
         method: "POST",
@@ -214,6 +215,7 @@ export default function AdminPanel() {
         body: JSON.stringify({ email, password })
       });
       const data = await res.json();
+      console.log("Login response status:", res.status, data);
       if (!res.ok) {
         setLoginError(data.error || "Email atau password salah.");
         setLoginLoading(false);
@@ -222,6 +224,7 @@ export default function AdminPanel() {
       localStorage.setItem("warung_admin_token", data.token);
       setIsLoggedIn(true);
     } catch (err) {
+      console.error("Login exception:", err);
       setLoginError("Gagal tersambung ke server.");
     } finally {
       setLoginLoading(false);

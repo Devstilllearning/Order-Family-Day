@@ -134,6 +134,11 @@ export default function App() {
 
   // Routing conditions to Admin Portal
   const isAdminView = currentPath === "/admin" || currentHash === "#/admin";
+  
+  // Quick access to admin
+  const goToAdmin = () => {
+    window.location.hash = "#/admin";
+  };
 
   if (isAdminView) {
     return <AdminPanel />;
@@ -335,10 +340,8 @@ export default function App() {
                   {filteredMenuItems.map(item => (
                     <div
                       key={item.id}
-                      onClick={() => item.isAvailable && setSelectedItem(item)}
-                      className={`relative bg-white p-4 rounded-2xl border border-rose-100 hover:border-rose-300 shadow-sm flex justify-between items-center cursor-pointer transition-all duration-150 ${
-                        !item.isAvailable ? "opacity-55 cursor-not-allowed select-none" : ""
-                      }`}
+                      onClick={() => setSelectedItem(item)}
+                      className="relative bg-white p-4 rounded-2xl border border-rose-100 hover:border-rose-300 shadow-sm flex justify-between items-center cursor-pointer transition-all duration-150"
                     >
                       {/* Left: Info details */}
                       <div className="flex-1 min-w-0 pr-3.5">
@@ -349,11 +352,6 @@ export default function App() {
                           {item.isPopular && (
                             <span className="bg-yellow-400 text-[10px] px-2 py-0.5 rounded-full font-bold uppercase text-yellow-950">
                               🔥 Populer
-                            </span>
-                          )}
-                          {!item.isAvailable && (
-                            <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-gray-250 text-gray-600 block">
-                              Habis
                             </span>
                           )}
                         </div>
@@ -374,7 +372,6 @@ export default function App() {
                         </div>
 
                         {/* Add Button right bottom corner */}
-                        {item.isAvailable && (
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
@@ -384,7 +381,6 @@ export default function App() {
                           >
                             +
                           </button>
-                        )}
                       </div>
                     </div>
                   ))}
@@ -393,8 +389,14 @@ export default function App() {
             </div>
             
             {/* Fine print footnote */}
-            <div className="text-center pt-8 text-[10px] text-gray-400 font-semibold">
-              Kru Warung Hangat mengutamakan kesegaran dan kebersihan. 🍓
+            <div className="text-center pt-8 text-[10px] text-gray-400 font-semibold space-y-1">
+              <p>Kru Warung Hangat mengutamakan kesegaran dan kebersihan. 🍓</p>
+              <button 
+                onClick={goToAdmin}
+                className="text-rose-300 hover:text-rose-500 font-bold underline"
+              >
+                Admin Panel
+              </button>
             </div>
           </main>
 
