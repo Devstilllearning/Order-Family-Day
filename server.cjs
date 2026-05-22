@@ -106,9 +106,14 @@ function getFallbackInsight(totalOrders, totalIncome, topSellingItem) {
 }
 async function startServer() {
   const app = (0, import_express.default)();
+  const allowedOrigins = [
+    "https://devstilllearning.github.io",
+    "http://localhost:5173",
+    "http://localhost:3000",
+    "https://ais-pre-rso3aurj5z4hvw4lzk3ghw-337459441300.asia-southeast1.run.app"
+  ];
   const corsOptions = {
-    origin: true,
-    // true reflects the origin
+    origin: allowedOrigins,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"]
@@ -118,7 +123,7 @@ async function startServer() {
   const server = import_http.default.createServer(app);
   const io = new import_socket.Server(server, {
     cors: {
-      origin: true,
+      origin: allowedOrigins,
       methods: ["GET", "POST", "OPTIONS"],
       credentials: true
     }
