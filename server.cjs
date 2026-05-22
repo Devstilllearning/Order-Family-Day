@@ -106,16 +106,20 @@ function getFallbackInsight(totalOrders, totalIncome, topSellingItem) {
 }
 async function startServer() {
   const app = (0, import_express.default)();
-  app.use((0, import_cors.default)({
-    origin: "https://devstilllearning.github.io",
+  const corsOptions = {
+    origin: true,
+    // true reflects the origin
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    credentials: true
-  }));
+    credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization"]
+  };
+  app.use((0, import_cors.default)(corsOptions));
+  app.options("*", (0, import_cors.default)(corsOptions));
   const server = import_http.default.createServer(app);
   const io = new import_socket.Server(server, {
     cors: {
-      origin: "https://devstilllearning.github.io",
-      methods: ["GET", "POST"],
+      origin: true,
+      methods: ["GET", "POST", "OPTIONS"],
       credentials: true
     }
   });
