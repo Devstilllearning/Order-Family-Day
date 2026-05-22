@@ -24,6 +24,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 // server.ts
 var import_express = __toESM(require("express"), 1);
 var import_http = __toESM(require("http"), 1);
+var import_cors = __toESM(require("cors"), 1);
 var import_path = __toESM(require("path"), 1);
 var import_socket = require("socket.io");
 var import_vite = require("vite");
@@ -105,6 +106,7 @@ function getFallbackInsight(totalOrders, totalIncome, topSellingItem) {
 }
 async function startServer() {
   const app = (0, import_express.default)();
+  app.use((0, import_cors.default)());
   const server = import_http.default.createServer(app);
   const io = new import_socket.Server(server, {
     cors: {
