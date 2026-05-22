@@ -1,0 +1,57 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Table {
+  id        String   @id @default(uuid())
+  number    Int      @unique
+  qrCodeUrl String   @default("")
+  orders    Order[]
+}
+
+model MenuItem {
+  id          String      @id @default(uuid())
+  name        String
+  description String
+  price       Int
+  category    String      // "Makanan" or "Minuman"
+  isAvailable Boolean     @default(true)
+  isPopular   Boolean     @default(false)
+  orderItems  OrderItem[]
+}
+
+model Order {
+  id              String      @id @default(uuid())
+  tableId         String
+  table           Table       @relation(fields: [tableId], references: [id])
+  customerName    String?     // null if optional/not filled
+  paymentMethod   String      // "KASIR" | "QRIS"
+  status          String      // "MENUNGGU" | "DIPROSES" | "SIAP" | "SELESAI" | "DITOLAK"
+  totalPrice      Int
+  rejectionReason String?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  orderItems      OrderItem[]
+}
+
+model OrderItem {
+  id         String   @id @default(uuid())
+  orderId    String
+  order      Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  menuItemId String
+  menuItem   MenuItem @relation(fields: [menuItemId], references: [id])
+  quantity   Int
+  options    String   // JSON stringified options, e.g., '{"pedas":"Sedang"}'
+  unitPrice  Int
+}
+
+model Admin {
+  id           String @id @default(uuid())
+  email        String @unique
+  passwordHash String
+}

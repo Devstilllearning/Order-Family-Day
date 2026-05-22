@@ -1,0 +1,6 @@
+{
+  "name": "Warung Hangat",
+  "description": "Aplikasi Pemesanan Makanan berbasis QR Code untuk Restoran Warung Hangat, dilengkapi Live Order Tracker, Admin Dashboard Kanban, dan insight AI dari Gemini.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
