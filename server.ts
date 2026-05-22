@@ -103,14 +103,19 @@ function getFallbackInsight(totalOrders: number, totalIncome: number, topSelling
 
 async function startServer() {
   const app = express();
-  app.use(cors());
+  app.use(cors({
+    origin: "https://devstilllearning.github.io",
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    credentials: true,
+  }));
   const server = http.createServer(app);
   
   // Attach socket.io
   const io = new Server(server, {
     cors: {
-      origin: "*",
-      methods: ["GET", "POST"]
+      origin: "https://devstilllearning.github.io",
+      methods: ["GET", "POST"],
+      credentials: true
     }
   });
 
