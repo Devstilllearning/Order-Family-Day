@@ -311,9 +311,6 @@ async function startServer() {
         if (!menuItem) {
           return res.status(400).json({ error: `Menu item ${item.menuItemId} tidak valid.` });
         }
-        if (!menuItem.isAvailable) {
-          return res.status(400).json({ error: `Menu item '${menuItem.name}' sedang kosong.` });
-        }
         const optionsStr = typeof item.options === "string" ? item.options : JSON.stringify(item.options || {});
         computedTotalPrice += menuItem.price * Number(item.quantity);
         orderItemsToCreate.push({
